@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expense Tracker</title>
+</head>
+<body onload="showdata(); showtotal();">
+
+
+
+ 
+
+  <!-- Header -->
+  <div id="topheader">Expense Tracker</div>
+  <div style="text-align:right; padding:10px;"> 
+    <button onclick="showpopup()">Add New Expense</button>
+  </div>
+  <h2 id="header">My Expenses List</h2>
+
+  <!-- Add Expense Popup -->
+  <div id="popup">
+    <button id="cross" onclick="showpopup()">Go Back</button><br>
+    <input type="text" id="ename" placeholder="expense name"><br>
+    <input type="text" id="eamount" placeholder="expense amount"><br>
+    <select id="cat">
+      <option>--Select category</option>
+      <option>Transport</option>
+      <option>Food</option>
+      <option>Shopping</option>   
+      <option>Others</option>
+    </select>
+    <br><br>
+    <button onclick="addexpense()">SAVE</button>
+  </div>
+
+  <!-- Edit Expense Popup -->
+  <div id="popupedit">
+    <button id="crossedit" onclick="showpopupedit()">Go Back</button>
+    <h3>Edit Expense</h3>
+    <input type="text" id="ename_edit" placeholder="username"><br>
+    <input type="text" id="eamount_edit" placeholder="email"><br>
+    <select id="cat_edit">
+      <option>--Select category</option>
+      <option>Transport</option>
+      <option>Food</option>
+      <option>Shopping</option>   
+      <option>Others</option>
+    </select>
+    <br>
+    <button onclick="fun_update()">Update</button>
+  </div>
+
+  <!-- Data and Total -->
+  <div id="wrapper"></div>
+      <div style="text-align:right; padding:10px;"> 
+       <label for="filter" style="font-weight: bold; float: left; color: white;">Total By Category:</label>
+        <select id="filter" onchange="showdata(); showtotal();">
+         <option>All</option>
+         <option>Transport</option>
+         <option>Food</option>
+         <option>Shopping</option>
+         <option>Others</option>
+        </select>
+     </div>
+  <div id="total"></div>
+
+
+</body>
+</html>
+  <!-- JavaScript -->
+  <script>
+    let expenseList = [];
+    let selectedFilterCat = 'all';
+    let flag = 0;
+    let selectedIndex = -1;
+
+    function addexpense() {
+      const d = new Date().toLocaleString();
+      const n = document.getElementById("ename").value;
+      const a = document.getElementById("eamount").value;
+      let c = document.getElementById("cat").value.trim();
+      c = c.charAt(0).toUpperCase() + c.slice(1).toLowerCase();  // Fix casing
+
+      const i = expenseList.length + 1;
+      const obj = { id: i, name: n, amount: a, category: c, doe: d };
+
+      expenseList.push(obj);
+      localStorage.setItem("list", JSON.stringify(expenseList));
+
+      showpopup();
+      document.getElementById("ename").value = "";
+      document.getElementById("eamount").value = "";
+      document.getElementById("cat").value = "";
+      showdata();
+      showtotal();
+    }
+
+    function showdata() {
+      let data = [];
+      let t = JSON.parse(localStorage.getItem("list")) || [];
+      expenseList = t;
+
+      if (document.getElementById("filter")) {
+        selectedFilterCat = document.getElementById("filter").value;
+        data = selectedFilterCat === 'All' ? expenseList : expenseList.filter(e => e.category.toLowerCase() === selectedFilterCat.toLowerCase());
+      } else {
+        data = expenseList;
+      }
+
+      let temp = `<table>
+                    <tr>
+                      <th>id</th>
+                      <th>name</th>
+                      <th>amount</th>
+                      <th>category</th>
+                      <th>date/time</th>
+                      <th>delete</th>
+                      <th>edit</th>
+                    </tr>`;
+
+      data.forEach((e, i) => {
+        temp += `<tr>
+                   <td>${e.id}</td>
+                   <td>${e.name}</td>
+                   <td>${e.amount}</td>
+                   <td>${e.category}</td>
+                   <td>${e.doe}</td>
+                   <td><button onclick="deleteit(${i})">delete</button></td>
+                   <td><button onclick="editit(${i})">edit</button></td>
+                 </tr>`;
+      });
+
+      temp += `</table>`;
+      document.getElementById("wrapper").innerHTML = temp;
+    }
+
+    function showtotal() {
+      let t = JSON.parse(localStorage.getItem("list")) || [];
+      expenseList = t;
+
+      let selectedCat = document.getElementById("filter").value;
+      let filtered = selectedCat === 'All' ? expenseList : expenseList.filter(e => e.category.toLowerCase() === selectedCat.toLowerCase());
+
+      const total = filtered.reduce((sum, e) => sum + parseInt(e.amount || 0), 0);
+      document.getElementById("total").innerHTML = "Total: " + total;
+    }
+
+    function deleteit(index) {
+      expenseList.splice(index, 1);
+      localStorage.setItem("list", JSON.stringify(expenseList));
+      showdata();
+      showtotal();
+    }
+
+    function showpopup() {
+      const popup = document.getElementById("popup");
+      popup.style.visibility = (flag === 0) ? 'visible' : 'hidden';
+      flag = (flag === 0) ? 1 : 0;
+    }
+
+    function showpopupedit() {
+      document.getElementById("popupedit").style.visibility = 'hidden';
+    }
+
+    function editit(index) {
+      selectedIndex = index;
+      const item = expenseList[index];
+      document.getElementById("ename_edit").value = item.name;
+      document.getElementById("eamount_edit").value = item.amount;
+      document.getElementById("cat_edit").value = item.category;
+      document.getElementById("popupedit").style.visibility = 'visible';
+    }
+
+    function fun_update() {
+      const u = document.getElementById("ename_edit").value;
+      const e = document.getElementById("eamount_edit").value;
+      let c = document.getElementById("cat_edit").value.trim();
+      c = c.charAt(0).toUpperCase() + c.slice(1).toLowerCase(); // Fix casing
+
+      const obj = {
+        id: expenseList[selectedIndex].id,
+        name: u,
+        amount: e,
+        category: c,
+        doe: expenseList[selectedIndex].doe
+      };
+
+      expenseList.splice(selectedIndex, 1, obj);
+      localStorage.setItem("list", JSON.stringify(expenseList));
+      showdata();
+      showtotal();
+      document.getElementById("popupedit").style.visibility = 'hidden';
+    }
+  </script>
+
+  <!-- CSS Style -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #ff5555;
+    }
+
+    #topheader {
+      background-color: black;
+      color: #dfff00;
+      padding: 15px;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    #header {
+      background-color: black;
+      color: #dfff00;
+      padding: 15px;
+      font-size: 30px;
+      margin-top: 200px;
+    }
+
+    #popup, #popupedit {
+      background-color: #ff6b6b;
+      padding: 10px;
+      position: absolute;
+      top: 10px;
+      left: 40%;
+      margin-top: 50px;
+      visibility: hidden;
+      width: 300px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #333;
+      color: white;
+    }
+
+    #popup input, #popup select, 
+    #popupedit input, #popupedit select, #popup button, #popupedit button {
+      display: block;
+      width: 90%;
+      margin: 5px auto;
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #popup button, #popupedit button {
+      background-color: #dfff00;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #popup button:hover, #popupedit button:hover {
+      background-color: #bfff00;
+    }
+
+    #cross, #crossedit {
+      background-color: red;
+      color: white;
+      width: 2%;
+      height: 20px;
+      float: center;
+      border: none;
+      border-radius: 5%;
+      margin-bottom: 5px;
+    }
+
+    td, th {
+      border: 1px solid black;
+      padding: 20px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #dfff00;
+      color: black;
+      padding: 7px;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 80%;
+      padding: 30px;
+      margin-left: 100px;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    #total {
+      width: 200px;
+      height: 35px;
+      background-color: #dfff00;
+      color: black;
+      border-radius: 10px;
+      margin-left: 500px;
+      margin-bottom: 10px;
+      text-align: center;
+      padding: 25px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    #filter
+    {
+      
+      float: left;
+      margin-left:35px;
+    }
+  </style>
+
