@@ -195,120 +195,147 @@
   </script>
 
   <!-- CSS Style -->
-  <style>
-    * {
+   <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fa;
       margin: 0;
       padding: 0;
-    }
-
-    body {
-      background-color: #ff5555;
+      color: #333;
     }
 
     #topheader {
-      background-color: black;
-      color: #dfff00;
-      padding: 15px;
-      font-size: 30px;
-      font-weight: bold;
-    }
-
-    #header {
-      background-color: black;
-      color: #dfff00;
-      padding: 15px;
-      font-size: 30px;
-      margin-top: 200px;
-    }
-
-    #popup, #popupedit {
-      background-color: #ff6b6b;
-      padding: 10px;
-      position: absolute;
-      top: 10px;
-      left: 40%;
-      margin-top: 50px;
-      visibility: hidden;
-      width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #333;
+      background-color: #2ab7a9;
       color: white;
-    }
-
-    #popup input, #popup select, 
-    #popupedit input, #popupedit select, #popup button, #popupedit button {
-      display: block;
-      width: 90%;
-      margin: 5px auto;
-      padding: 5px;
-      border: none;
-      border-radius: 5px;
-    }
-
-    #popup button, #popupedit button {
-      background-color: #dfff00;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #popup button:hover, #popupedit button:hover {
-      background-color: #bfff00;
-    }
-
-    #cross, #crossedit {
-      background-color: red;
-      color: white;
-      width: 2%;
-      height: 20px;
-      float: center;
-      border: none;
-      border-radius: 5%;
-      margin-bottom: 5px;
-    }
-
-    td, th {
-      border: 1px solid black;
       padding: 20px;
+      font-size: 28px;
       text-align: center;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    h2#header {
+      text-align: center;
+      margin-top: 20px;
+      color: #2ab7a9;
     }
 
     button {
-      background-color: #dfff00;
-      color: black;
-      padding: 7px;
-      border-radius: 5px;
+      background-color: #2ab7a9;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #219083;
+    }
+
+    #popup, #popupedit {
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      padding: 20px;
+      width: 300px;
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 12px;
+      visibility: hidden;
+      z-index: 1000;
+    }
+
+    input, select {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    #wrapper {
+      margin: 30px auto;
+      width: 90%;
+      max-width: 1000px;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
     }
 
     table {
-      width: 80%;
-      padding: 30px;
-      margin-left: 100px;
-      text-transform: uppercase;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
 
-    h3 {
+    th, td {
       text-align: center;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #2ab7a9;
+      color: white;
+      font-weight: 500;
+    }
+
+    tr:hover {
+      background-color: #e0f7f5;
     }
 
     #total {
-      width: 200px;
-      height: 35px;
-      background-color: #dfff00;
-      color: black;
-      border-radius: 10px;
-      margin-left: 500px;
-      margin-bottom: 10px;
       text-align: center;
-      padding: 25px;
+      font-size: 20px;
       font-weight: bold;
-      text-transform: uppercase;
+      padding: 10px 20px;
+      color: #2ab7a9;
     }
-    #filter
-    {
-      
-      float: left;
-      margin-left:35px;
+
+    #filter {
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 150px;
+    }
+
+    @media (max-width: 600px) {
+      #wrapper, #popup, #popupedit {
+        width: 95%;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      td {
+        text-align: left;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        width: 45%;
+        white-space: nowrap;
+      }
+
+      td:nth-of-type(1)::before { content: "ID"; }
+      td:nth-of-type(2)::before { content: "Name"; }
+      td:nth-of-type(3)::before { content: "Amount"; }
+      td:nth-of-type(4)::before { content: "Category"; }
+      td:nth-of-type(5)::before { content: "Date/Time"; }
+      td:nth-of-type(6)::before { content: "Delete"; }
+      td:nth-of-type(7)::before { content: "Edit"; }
     }
   </style>
-
